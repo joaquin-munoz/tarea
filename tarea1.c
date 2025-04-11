@@ -28,7 +28,7 @@ void mostrarMenuPrincipal() {
 }
 
 void registrar_ticket(List *ticketpersona, List *bajo) {
-    printf("Registrar nuevo ticket\n");
+    printf("Registrar nuevo ID\n");
     ticket *tic = (ticket*)malloc(sizeof(ticket));
     if (tic == NULL) {
         return;
@@ -141,24 +141,83 @@ void mostrar_lista_ticket(List *ticketpersona, List *bajo, List *media, List *al
     mostrartickets(bajo);
 }
 
-// Procesar el siguiente ticket
-void atenderSiguienteTicket(List *ticketpersona) {
-    ticket *ticketactual = list_first(ticketpersona);
-    if (ticketactual == NULL) {
+/*- Selecciona el ticket con mayor prioridad (y más antiguo dentro de su nivel) para ser atendido.
+- Elimina el ticket de la lista y muestra sus datos (ID, descripción, prioridad y hora de registro).
+- Si no hay tickets pendientes, muestra un aviso.*/
+void eliminarTicketDeLista(List *lista, ticket *tic) {
+    ticket *actual = list_first(lista);
+    while (actual != NULL) {
+        if (actual == tic) {
+            list_popCurrent(lista);  // Eliminar el ticket de la lista
+            break;
+        }
+        actual = list_next(lista);
+    }
+}
+
+void atenderSiguienteTicket(List *ticketpersona, List *bajo, List *media, List *alto) {
+    // Primero, verificar si hay tickets en la lista principal (ticketpersona)
+    if (list_size(alto) == 0 && list_size(media) == 0 && list_size(bajo) == 0) {
         printf("No hay tickets pendientes.\n");
         return;
     }
 
-    // El ticket con mayor prioridad es el primero en la lista
-    printf("Atendiendo ticket:\n");
-    printf("ID: %d\n", ticketactual->id);
-    printf("Hora: %s\n", ticketactual->hora);
-    printf("Prioridad: %s\n", ticketactual->prioridad);
-    printf("Problema: %s\n", ticketactual->problema);
+    // Verificar si hay tickets en la lista de "Alto"
+    if (list_size(alto) > 0) {
+        ticket *ticketAtendido = list_popFront(alto); // Tomar el ticket más antiguo (primer ticket en la lista)
+        printf("Atendiendo ticket con alta prioridad:\n");
+        printf("ID: %d\n", ticketAtendido->id);
+        printf("Hora: %s\n", ticketAtendido->hora);
+        printf("Prioridad: %s\n", ticketAtendido->prioridad);
+        printf("Problema: %s\n", ticketAtendido->problema);
 
-    // Eliminar el ticket de la lista
-    list_popFront(ticketpersona);
+        // Eliminar de la lista principal
+        eliminarTicketDeLista(ticketpersona, ticketAtendido);
+
+        // Liberar la memoria ocupada por el ticket atendido
+        free(ticketAtendido);  
+        return;
+    }
+
+    // Si no hay tickets "Alto", verificar en "Medio"
+    if (list_size(media) > 0) {
+        ticket *ticketAtendido = list_popFront(media);  // Tomar el ticket más antiguo
+        printf("Atendiendo ticket con prioridad media:\n");
+        printf("ID: %d\n", ticketAtendido->id);
+        printf("Hora: %s\n", ticketAtendido->hora);
+        printf("Prioridad: %s\n", ticketAtendido->prioridad);
+        printf("Problema: %s\n", ticketAtendido->problema);
+
+        // Eliminar de la lista principal
+        eliminarTicketDeLista(ticketpersona, ticketAtendido);
+
+        // Liberar la memoria ocupada por el ticket atendido
+        free(ticketAtendido);  
+        return;
+    }
+
+    // Si no hay tickets "Alto" ni "Medio", verificar en "Bajo"
+    if (list_size(bajo) > 0) {
+        ticket *ticketAtendido = list_popFront(bajo);  // Tomar el ticket más antiguo
+        printf("Atendiendo ticket con baja prioridad:\n");
+        printf("ID: %d\n", ticketAtendido->id);
+        printf("Hora: %s\n", ticketAtendido->hora);
+        printf("Prioridad: %s\n", ticketAtendido->prioridad);
+        printf("Problema: %s\n", ticketAtendido->problema);
+
+        // Eliminar de la lista principal
+        eliminarTicketDeLista(ticketpersona, ticketAtendido);
+
+        // Liberar la memoria ocupada por el ticket atendido
+        free(ticketAtendido);  
+        return;
+    }
+
+    // Si no hay tickets en ninguna lista (aunque ya se verifica arriba)
+    printf("No hay tickets pendientes.\n");
 }
+
+
 
 // Buscar ticket por ID
 void buscarTicketPorID(List *ticketpersona) {
@@ -205,7 +264,7 @@ int main() {
             mostrar_lista_ticket(ticket, bajo, media, alto);
             break;
         case '4':
-            atenderSiguienteTicket(ticket);
+            atenderSiguienteTicket(ticket, bajo, media, alto);
             break;
         case '5':
             buscarTicketPorID(ticket);
