@@ -53,7 +53,7 @@ void registrar_ticket(List *ticketpersona, List *bajo) {
     tic->id = id;
     getchar(); // Para consumir el salto de línea residual
     strcpy(tic->prioridad, "Bajo"); // Prioridad por defecto
-    printf("Ingrese descripción del problema: ");
+    printf("Ingrese descripcion del problema: ");
     scanf("%1000[^\n]s", tic->problema);
     getchar(); // Para consumir el salto de línea residual
 
@@ -77,7 +77,7 @@ void reasignarprioridad(List *listatickets, List *bajo, List *media, List *alto)
 
     // Validar la prioridad
     if (strcmp(nuevaprioridad, "Alto") != 0 && strcmp(nuevaprioridad, "Medio") != 0 && strcmp(nuevaprioridad, "Bajo") != 0) {
-        printf("ERROR: Prioridad no válida. Debe ser 'Alto', 'Medio' o 'Bajo'.\n");
+        printf("ERROR: Prioridad no valida. Debe ser 'Alto', 'Medio' o 'Bajo'.\n");
         return;
     }
 
@@ -93,7 +93,7 @@ void reasignarprioridad(List *listatickets, List *bajo, List *media, List *alto)
     }
 
     if (!encontrado) {
-        printf("ERROR: No se encontró el ticket con ID %d.\n", id);
+        printf("ERROR: No se encontro el ticket con ID %d.\n", id);
     }
     list_clean(bajo);
     list_clean(media);
@@ -238,7 +238,7 @@ void buscarTicketPorID(List *ticketpersona) {
         ticketactual = list_next(ticketpersona);
     }
 
-    printf("ERROR: No se encontró el ticket con ID %d.\n", id);
+    printf("ERROR: No se encontro el ticket con ID %d.\n", id);
 }
 
 int main() {
@@ -250,7 +250,7 @@ int main() {
 
     do {
         mostrarMenuPrincipal();
-        printf("Ingrese su opción: ");
+        printf("Ingrese su opcion: ");
         scanf(" %c", &opcion);
 
         switch (opcion) {
@@ -270,7 +270,7 @@ int main() {
             buscarTicketPorID(ticket);
             break;
         case '6':
-            puts("Saliendo del sistema de gestión...");
+            puts("Saliendo del sistema de gestion...");
             break;
         default:
             puts("Opción no válida. Intente nuevamente.");
